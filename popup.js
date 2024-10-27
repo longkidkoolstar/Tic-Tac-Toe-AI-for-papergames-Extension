@@ -12,6 +12,48 @@ chrome.storage.sync.get(['username'], function(result) {
     }
 });
 
+// Initialize the script enabled state
+let isScriptEnabled = false; // Default to off
+
+// Get stored script enabled state from Chrome storage
+chrome.storage.sync.get(['isScriptEnabled'], function(result) {
+    isScriptEnabled = result.isScriptEnabled || false; // Default to false if not set
+    updateToggleButton(); // Update button text and state
+});
+
+// Toggle the script enabled state
+document.getElementById('toggleScriptButton').addEventListener('click', function() {
+    isScriptEnabled = !isScriptEnabled;
+    chrome.storage.sync.set({ isScriptEnabled: isScriptEnabled });
+    updateToggleButton();
+});
+
+// Function to update the toggle button text and power icon based on the state
+function updateToggleButton() {
+    const button = document.getElementById('toggleScriptButton');
+    button.textContent = isScriptEnabled ? 'Script On' : 'Script Off';
+    button.style.backgroundColor = isScriptEnabled ? 'green' : 'red';
+
+    const powerIcon = document.getElementById('powerIcon');
+    powerIcon.className = isScriptEnabled ? 'on' : 'off'; // Update the icon class
+}
+
+// Function to handle the game's functionality
+function gameFunctionality() {
+    if (!isScriptEnabled) {
+        console.log("Script is disabled. Stopping functionality.");
+        return; // Exit if the script is disabled
+    }
+
+    // Placeholder for the game's actual functionality
+    console.log("Game functionality is running...");
+    // Here you would include the actual logic you want to run when the script is enabled.
+}
+
+// Example of continuously checking game functionality
+setInterval(gameFunctionality, 1000); // Check every second (replace with your actual game loop logic)
+
+// Logout function
 function logout() {
     chrome.storage.sync.remove(['username']);
     location.reload();

@@ -474,9 +474,40 @@ function updateBoard(squareId) {
         return false;
     }
 
-    setInterval(function() {
-        initAITurn();
-    }, 1000);
+// Function to check if the script is enabled
+function checkIfScriptEnabled() {
+    return new Promise((resolve) => {
+        chrome.storage.sync.get(['isScriptEnabled'], function(result) {
+            resolve(result.isScriptEnabled);
+        });
+    });
+}
+
+
+// Function to start checking the script's enabled state at regular intervals
+async function startInterval() {
+
+
+    setInterval(async function() {
+        const isEnabled = await checkIfScriptEnabled();
+
+        // Only run the functionality if the state has changed to enabled
+        if (isEnabled) {
+            console.log("Script enabled. Starting functionality...");
+            initAITurn(); // Call the function when enabled
+        } else if (!isEnabled) {
+            console.log("Script disabled. Stopping functionality...");
+            // Optionally handle stopping the functionality if needed
+        }
+
+
+    }, 1000); // Check every second
+}
+
+// Call the function to start the interval
+startInterval();
+
+
 
     document.addEventListener('DOMContentLoaded', function() {
         initGame();
