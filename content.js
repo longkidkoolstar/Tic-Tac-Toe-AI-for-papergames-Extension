@@ -484,6 +484,76 @@ function checkIfScriptEnabled() {
 }
 
 
+
+  /**
+   * Periodically checks if the button is available and if it's time to click it.
+   * Meant for checking if the script is stuck and needs to be reset.
+   */
+  function checkAndClickButton() {
+    console.log("Checking for button click...");
+    const currentUrl = window.location.href;
+    console.log(`Current URL: ${currentUrl}`);
+    const button = document.querySelector('button.btn-outline-dark.ng-star-inserted');
+    
+    if (button) {
+      console.log("Button found", button); 
+    }
+    
+    // Get the last run time from Chrome storage
+    chrome.storage.local.get(['currentUrl', 'lastRun'], (result) => {
+      const storedUrl = result.currentUrl || currentUrl;
+      console.log(`Saved URL: ${storedUrl}`);
+      const lastRun = result.lastRun || 0;
+  
+      // Update the stored URL on the first run if it's not there
+      if (!result.currentUrl) {
+        chrome.storage.local.set({ currentUrl: storedUrl });
+      }
+  
+      // Get the current time
+      const now = Date.now();
+  
+      // Calculate the time difference since the last run
+      const timeDifference = now - lastRun;
+      let timeRemaining = 120000 - timeDifference;
+  
+      // Ensure timeRemaining is not negative
+      if (timeRemaining < 0) timeRemaining = 0;
+  
+      // Log how many minutes/seconds are left
+      const minutesLeft = Math.floor(timeRemaining / 60000);
+      const secondsLeft = ((timeRemaining % 60000) / 1000).toFixed(0);
+      console.log(`Time left: ${minutesLeft} minute(s) and ${secondsLeft} second(s)`);
+  
+      // Check if 2 minutes have passed since the last run and the button is not the "Play vs robot" button
+      if (timeRemaining <= 0 && button && storedUrl === currentUrl && !button.textContent.includes('Play vs robot')) {
+        button.click();
+  
+        // Update the last run time in Chrome storage
+        chrome.storage.local.set({ lastRun: now });
+      }
+    });
+  }
+  
+  // Run the function on a 12-second interval
+  setInterval(checkAndClickButton, 12000);
+  
+  
+  // Optional: Clear stored URL on page unload
+  window.addEventListener('beforeunload', () => {
+    chrome.storage.local.remove(['currentUrl', 'lastRun']);
+  });
+  
+  
+  // Set up the interval to check every 2 minutes
+  setInterval(checkAndClickButton, 120000); // 120000 milliseconds = 2 minutes
+  
+  // Optional: Clear the stored URL when navigating away
+  window.addEventListener('beforeunload', () => {
+    chrome.storage.local.remove('currentUrl');
+  });
+  
+
 // Function to start checking the script's enabled state at regular intervals
 async function startInterval() {
 
