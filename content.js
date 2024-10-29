@@ -57,20 +57,25 @@
     let previousNumber = null; // Track the previous number for the countdown
     let checkIntervalId = null; // Store the interval ID for button checking
     let trackIntervalId = null; // Store the interval ID for countdown tracking
-    
+   
+
     // Function to simulate clicking on a grid cell
     function simulateCellClick(row, col) {
         const gridItems = document.querySelectorAll('.grid.s-3x3 .grid-item');
         const cell = gridItems[row * 3 + col];
         if (cell) {
-            const event = new MouseEvent('click', {
-                bubbles: true,
-                cancelable: true,
-            });
-            cell.dispatchEvent(event);
+          console.log(`Clicked cell element:`, cell);
+          const event = new MouseEvent('click', {
+            bubbles: true,
+            cancelable: true,
+          });
+          cell.dispatchEvent(event);
+          // Optional: Remove the highlight after a short delay
+          setTimeout(() => cell.classList.remove('highlight'), 1000);
         }
-    }
-    
+      }
+
+
     // Function to receive settings from popup.js
     async function receiveSettings() {
         chrome.storage.sync.get(['depth', 'isToggled'], function(result) {
@@ -197,11 +202,11 @@
     //------------------------------------------------
 
     var player = null; // Global player variable
+    let prevElementValue = ''; // Moved outside function for persistence
 
 function updateBoard(squareId) {
     var row = parseInt(squareId[0]);
     var col = parseInt(squareId[1]);
-    var prevChronometerValue = '';
 
     // Use Chrome Storage API to get the username
     chrome.storage.sync.get("username", function(result) {
@@ -242,9 +247,10 @@ function updateBoard(squareId) {
 
         var currentElement = chronometer || numberElement;
 
-        if (currentElement.textContent !== prevChronometerValue && profileOpener) {
-            prevChronometerValue = currentElement.textContent;
-            simulateCellClick(row, col);
+        // Check if the chronometer has changed, and if it's the player's turn
+        if (currentElement.textContent !== prevElementValue && profileOpener) {
+            prevElementValue = currentElement.textContent; // Update to current chronometer value
+            simulateCellClick(row, col); // Trigger click
         } else {
             console.log("Waiting for AI's turn...");
         }
@@ -510,7 +516,6 @@ function WebsiteErrorHandler() {
         }
     }
 
-    // If button text is "Leave game", click the button
     if (button && button.textContent.includes("Leave room") && isAutoQueueOn) {
         console.log("Button text is 'Leave room', clicking the button...");
         button.click();
