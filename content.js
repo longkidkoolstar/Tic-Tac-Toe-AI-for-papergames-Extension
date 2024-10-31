@@ -517,8 +517,15 @@ function WebsiteErrorHandler() {
     }
 
     if (button && button.textContent.includes("Leave room") && isAutoQueueOn) {
-        console.log("Button text is 'Leave room', clicking the button...");
-        button.click();
+        console.log("Button text is 'Leave room', waiting 1 second before clicking...");
+        setTimeout(() => {
+            if (button.textContent.includes("Leave room")) {
+                console.log("Button text still says 'Leave room', clicking the button...");
+                button.click();
+            } else {
+                console.log("Button text changed, not clicking...");
+            }
+        }, 1000);
     }
 }
 
