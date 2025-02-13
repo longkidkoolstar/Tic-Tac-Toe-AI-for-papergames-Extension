@@ -119,12 +119,12 @@
     }
     
     // Function to click the play online button
-    function clickPlayOnlineButton() {
-        const playOnlineButton = document.querySelector("button.btn-secondary.flex-grow-1");
-        if (playOnlineButton) {
-            playOnlineButton.click();
-        }
+function clickPlayOnlineButton() {
+    const playOnlineButton = document.querySelector("button.btn.btn-secondary.btn-lg.position-relative");
+    if (playOnlineButton) {
+        playOnlineButton.click();
     }
+}
     
     // Function to check and click buttons periodically
     function checkButtonsPeriodically() {
