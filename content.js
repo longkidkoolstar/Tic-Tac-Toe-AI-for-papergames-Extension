@@ -120,7 +120,7 @@
     
     // Function to click the play online button
 function clickPlayOnlineButton() {
-    const playOnlineButton = document.querySelector("button.btn.btn-secondary.btn-lg.position-relative");
+        const playOnlineButton = document.querySelector("body > app-root > app-navigation > div > div.d-flex.flex-column.h-100.w-100 > main > app-game-landing > div > div > div > div.col-12.col-lg-9.dashboard > div.card.area-buttons.d-flex.justify-content-center.align-items-center.flex-column > button.btn.btn-secondary.btn-lg.position-relative");
     if (playOnlineButton) {
         playOnlineButton.click();
     }
